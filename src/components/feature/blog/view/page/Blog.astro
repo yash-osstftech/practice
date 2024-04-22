@@ -1,0 +1,26 @@
+---
+import { BlogDataSource } from "../../data/dataSource/blog.datasource";
+import { BlogRepository } from "../../data/repositories";
+import { BlogUseCase } from "../../service/usecase";
+import BlogList from "../common/BlogList.astro";
+import { blogPostsStore, errorStore, isLoadingStore } from "../state/blog-state";
+
+const blogUseCase = new BlogUseCase(new BlogRepository(new BlogDataSource()));
+//* Fetch blog posts when the component is mounted
+blogUseCase.getLatestBlogPosts();
+
+---
+
+
+<div class="container mx-auto py-8">
+  <h1 class="text-3xl text-center font-bold mb-6">Blog</h1>
+  {!isLoadingStore.get() ? (
+    <div class="loading-message text-gray-500">Loading...</div>
+  ) : errorStore.get() ? (
+    <div class="text-red-500">Error: {errorStore.get()}</div>
+  ) : (
+    <>
+      <BlogList blogPosts={blogPostsStore.get()} />
+    </>
+  )}
+</div>
